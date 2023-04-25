@@ -111,6 +111,7 @@ async function chatReplyProcess(options: RequestOptions) {
 			apii = api1
 			apic = "api1"
 		}
+		console.log("apic："+apic)
     const response = await apii.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
