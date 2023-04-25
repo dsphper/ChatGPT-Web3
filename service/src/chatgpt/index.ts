@@ -34,7 +34,9 @@ if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.e
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
 let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
-
+let api1: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+let api2: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+let apiList = []
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
 
@@ -78,7 +80,10 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 
     setupProxy(options)
 
-    api = new ChatGPTUnofficialProxyAPI({ ...options })
+    api1 = new ChatGPTUnofficialProxyAPI({ ...options })
+    api2 = new ChatGPTUnofficialProxyAPI({ ...options })
+		apiList.push(api1)
+		apiList.push(api2)
     apiModel = 'ChatGPTUnofficialProxyAPI'
   }
 })()
@@ -101,7 +106,10 @@ async function chatReplyProcess(options: RequestOptions) {
         options = { ...lastContext }
     }
 		console.log(message)
-    const response = await api.sendMessage(message, {
+		let apii = apiList[Math.floor(Math.random() * 2)]
+		console.log(message)
+		console.log("apii", apii)
+    const response = await apii.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
         process?.(partialResponse)
