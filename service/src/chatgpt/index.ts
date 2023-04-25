@@ -100,7 +100,7 @@ async function chatReplyProcess(options: RequestOptions) {
       else
         options = { ...lastContext }
     }
-
+		console.log(message)
     const response = await api.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
