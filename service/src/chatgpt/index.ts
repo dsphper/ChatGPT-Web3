@@ -68,22 +68,38 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
     apiModel = 'ChatGPTAPI'
   }
   else {
-		const getOptions = () => {
-			const options: ChatGPTUnofficialProxyAPIOptions = {
-				accessToken: process.env.OPENAI_ACCESS_TOKEN,
+		const token = [
+			"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiI4MTUxODQ1ODBAcXEuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJodHRwczovL2FwaS5vcGVuYWkuY29tL2F1dGgiOnsidXNlcl9pZCI6InVzZXItQWFqbXd3TzVTdFBqSU03d0d4eHFUTlgwIn0sImlzcyI6Imh0dHBzOi8vYXV0aDAub3BlbmFpLmNvbS8iLCJzdWIiOiJhdXRoMHw2MzkxNDEyMTI5ODNjMmJkMTM3OWI2OTIiLCJhdWQiOlsiaHR0cHM6Ly9hcGkub3BlbmFpLmNvbS92MSIsImh0dHBzOi8vb3BlbmFpLm9wZW5haS5hdXRoMGFwcC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjgxNzAyMjE0LCJleHAiOjE2ODI5MTE4MTQsImF6cCI6IlRkSkljYmUxNldvVEh0Tjk1bnl5d2g1RTR5T282SXRHIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCBtb2RlbC5yZWFkIG1vZGVsLnJlcXVlc3Qgb3JnYW5pemF0aW9uLnJlYWQgb2ZmbGluZV9hY2Nlc3MifQ.HAjRTIP5v_JzH3IiiOCVZN90WxAv94TjVxPPNDkLtsKju8LV0OAK3M5YIdTDpPWkr7gpCgtPWRgCmy8jJNqL8kPg_8_8nMijz3Q5RUZuQ6kogHCwP5py4FRR7mDXUh07vwIW2hWblaXsF5PTJuX_6rNcD8TxlNHxrxaZwc9duagt0tpqeVwzAZ791tEnEsR8J92IRVQNSPsq_DHPBJACvfpXP-G2Y1-HgyeaBG_rEkuQ32uTNpPGGV80fXlT3CYTb8LiPayz1oVAjL01DvKzCDfRkHBhLIUw1cLTkXfJYMcb6quiyZwP-7SONdiHb6j67BlC4pSsk03AnMJf9FugYg",
+			"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJ0aWRtYXJzaGFuaXRhOTc1OEBvdXRsb29rLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlfSwiaHR0cHM6Ly9hcGkub3BlbmFpLmNvbS9hdXRoIjp7InVzZXJfaWQiOiJ1c2VyLXR3V05kMlFaejhoRUVoQmJDbkJKQ01PNyJ9LCJpc3MiOiJodHRwczovL2F1dGgwLm9wZW5haS5jb20vIiwic3ViIjoiYXV0aDB8NjNkNDg2MmU5ZmUxOGVmZDljNGNkYmVlIiwiYXVkIjpbImh0dHBzOi8vYXBpLm9wZW5haS5jb20vdjEiLCJodHRwczovL29wZW5haS5vcGVuYWkuYXV0aDBhcHAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTY4MTcyNDU2MCwiZXhwIjoxNjgyOTM0MTYwLCJhenAiOiJUZEpJY2JlMTZXb1RIdE45NW55eXdoNUU0eU9vNkl0RyIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgbW9kZWwucmVhZCBtb2RlbC5yZXF1ZXN0IG9yZ2FuaXphdGlvbi5yZWFkIG9mZmxpbmVfYWNjZXNzIn0.TsoMZF3KJ28495olEgjE_49t9AP2XT6hPuBzyNT102NOLqzQ_yJCJeN_i5NZD9OEpcLprE69bfBQfJufg8fu1WEDF14y6KuOMdUq90_aVMM84_oMNYhxIUeYVf41iPK5pnndXsBYZagdpuSTxjgjFkPegrKd-14kEBH0nNBoozAtS94ljKjx-6TCMersum56T76Yy-3-Tp8k_70HCAVdL3o4nHlEqz5G9l9uKjt3W5fgkc1fzE4iXKXCYMedDSmKAO5A1EMESyjm4WSXDcqenr_PbUo06puvdzanungWHeOjw1qCzPHSoNNqKObRAALP5h1_671r2xl5jDEA5ZBNag"
+		]
+// 首先，定义一个函数用于从数组中随机获取一个元素
+		function getRandomElement(arr) {
+			return arr[Math.floor(Math.random() * arr.length)];
+		}
+
+// 定义一个函数用于初始化 API 并返回一个 ChatGPTUnofficialProxyAPI 实例
+		function initializeApi() {
+			const accessToken = getRandomElement(token);
+			const options = {
+				accessToken,
 				apiReverseProxyUrl: isNotEmptyString(process.env.API_REVERSE_PROXY) ? process.env.API_REVERSE_PROXY : 'https://ai.fakeopen.com/api/conversation',
 				model,
 				debug: !disableDebug,
-			}
+			};
+			setupProxy(options);
+			return new ChatGPTUnofficialProxyAPI(options);
 		}
-		setInterval(() => {
-			let options = getOptions()
-			setupProxy(options)
 
-			api = new ChatGPTUnofficialProxyAPI({ ...options })
-			apiModel = 'ChatGPTUnofficialProxyAPI'
-		}, 1000);
+// 调用 initializeApi() 函数初始化 API 并赋值给 api 变量
+		let api = initializeApi();
 
+// 定义一个函数，用于每隔一秒钟重新初始化 API
+		function refreshApi() {
+			api = initializeApi();
+		}
+
+// 使用 setInterval 函数来每隔一秒钟重新初始化 API
+		setInterval(refreshApi, 1000);
   }
 })()
 
