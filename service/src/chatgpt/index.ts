@@ -83,8 +83,10 @@ let api2: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 			api = new ChatGPTUnofficialProxyAPI({ ...options })
 			return api
 		}
-		api = test(process.env.OPENAI_ACCESS_TOKEN)
-
+		const setK= ()=> {
+			api = test(process.env.OPENAI_ACCESS_TOKEN)
+		}
+		setK()
   }
 })()
 
