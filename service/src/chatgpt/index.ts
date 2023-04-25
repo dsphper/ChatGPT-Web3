@@ -34,8 +34,6 @@ if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.e
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
 let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
-let api1: ChatGPTAPI | ChatGPTUnofficialProxyAPI
-let api2: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
@@ -79,10 +77,8 @@ let api2: ChatGPTAPI | ChatGPTUnofficialProxyAPI
     }
 
     setupProxy(options)
-		options.accessToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiI4MTUxODQ1ODBAcXEuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJodHRwczovL2FwaS5vcGVuYWkuY29tL2F1dGgiOnsidXNlcl9pZCI6InVzZXItQWFqbXd3TzVTdFBqSU03d0d4eHFUTlgwIn0sImlzcyI6Imh0dHBzOi8vYXV0aDAub3BlbmFpLmNvbS8iLCJzdWIiOiJhdXRoMHw2MzkxNDEyMTI5ODNjMmJkMTM3OWI2OTIiLCJhdWQiOlsiaHR0cHM6Ly9hcGkub3BlbmFpLmNvbS92MSIsImh0dHBzOi8vb3BlbmFpLm9wZW5haS5hdXRoMGFwcC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjgxNzAyMjE0LCJleHAiOjE2ODI5MTE4MTQsImF6cCI6IlRkSkljYmUxNldvVEh0Tjk1bnl5d2g1RTR5T282SXRHIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCBtb2RlbC5yZWFkIG1vZGVsLnJlcXVlc3Qgb3JnYW5pemF0aW9uLnJlYWQgb2ZmbGluZV9hY2Nlc3MifQ.HAjRTIP5v_JzH3IiiOCVZN90WxAv94TjVxPPNDkLtsKju8LV0OAK3M5YIdTDpPWkr7gpCgtPWRgCmy8jJNqL8kPg_8_8nMijz3Q5RUZuQ6kogHCwP5py4FRR7mDXUh07vwIW2hWblaXsF5PTJuX_6rNcD8TxlNHxrxaZwc9duagt0tpqeVwzAZ791tEnEsR8J92IRVQNSPsq_DHPBJACvfpXP-G2Y1-HgyeaBG_rEkuQ32uTNpPGGV80fXlT3CYTb8LiPayz1oVAjL01DvKzCDfRkHBhLIUw1cLTkXfJYMcb6quiyZwP-7SONdiHb6j67BlC4pSsk03AnMJf9FugYg'
-    api1 = new ChatGPTUnofficialProxyAPI({ ...options })
-    api2 = new ChatGPTUnofficialProxyAPI({ ...options })
-    api = api1
+
+    api = new ChatGPTUnofficialProxyAPI({ ...options })
     apiModel = 'ChatGPTUnofficialProxyAPI'
   }
 })()
@@ -104,6 +100,7 @@ async function chatReplyProcess(options: RequestOptions) {
       else
         options = { ...lastContext }
     }
+
     const response = await api.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
