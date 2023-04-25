@@ -36,6 +36,7 @@ if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.e
 let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 let api1: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 let api2: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+// @ts-ignore
 let apiList = []
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
