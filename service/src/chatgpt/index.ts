@@ -68,17 +68,22 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
     apiModel = 'ChatGPTAPI'
   }
   else {
-    const options: ChatGPTUnofficialProxyAPIOptions = {
-      accessToken: process.env.OPENAI_ACCESS_TOKEN,
-      apiReverseProxyUrl: isNotEmptyString(process.env.API_REVERSE_PROXY) ? process.env.API_REVERSE_PROXY : 'https://ai.fakeopen.com/api/conversation',
-      model,
-      debug: !disableDebug,
-    }
+		const getOptions = () => {
+			const options: ChatGPTUnofficialProxyAPIOptions = {
+				accessToken: process.env.OPENAI_ACCESS_TOKEN,
+				apiReverseProxyUrl: isNotEmptyString(process.env.API_REVERSE_PROXY) ? process.env.API_REVERSE_PROXY : 'https://ai.fakeopen.com/api/conversation',
+				model,
+				debug: !disableDebug,
+			}
+		}
+		setInterval(() => {
+			let options = getOptions()
+			setupProxy(options)
 
-    setupProxy(options)
+			api = new ChatGPTUnofficialProxyAPI({ ...options })
+			apiModel = 'ChatGPTUnofficialProxyAPI'
+		}, 1000);
 
-    api = new ChatGPTUnofficialProxyAPI({ ...options })
-    apiModel = 'ChatGPTUnofficialProxyAPI'
   }
 })()
 
