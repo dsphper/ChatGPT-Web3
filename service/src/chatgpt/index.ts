@@ -80,6 +80,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 // 定义一个函数用于初始化 API 并返回一个 ChatGPTUnofficialProxyAPI 实例
 		function initializeApi() {
 			const accessToken = getRandomElement(token);
+			console.log('随机换key', accessToken)
 			const options = {
 				accessToken,
 				apiReverseProxyUrl: isNotEmptyString(process.env.API_REVERSE_PROXY) ? process.env.API_REVERSE_PROXY : 'https://ai.fakeopen.com/api/conversation',
