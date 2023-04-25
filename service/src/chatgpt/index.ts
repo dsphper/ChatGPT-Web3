@@ -104,13 +104,6 @@ async function chatReplyProcess(options: RequestOptions) {
       else
         options = { ...lastContext }
     }
-		// 逻辑随机
-		const randomNumber = Math.floor(Math.random() * 2); // 生成 0 或 1 的随机数
-		if (randomNumber === 0) {
-			api = api1;
-		} else {
-			api = api2;
-		}
     const response = await api.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
