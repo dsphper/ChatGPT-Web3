@@ -36,8 +36,6 @@ if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.e
 let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 let api1: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 let api2: ChatGPTAPI | ChatGPTUnofficialProxyAPI
-// @ts-ignore
-let apiList = []
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
 
@@ -83,8 +81,6 @@ let apiList = []
 
     api1 = new ChatGPTUnofficialProxyAPI({ ...options })
     api2 = new ChatGPTUnofficialProxyAPI({ ...options })
-		apiList.push(api1)
-		apiList.push(api2)
     apiModel = 'ChatGPTUnofficialProxyAPI'
   }
 })()
@@ -106,10 +102,7 @@ async function chatReplyProcess(options: RequestOptions) {
       else
         options = { ...lastContext }
     }
-		console.log(message)
-		let apii = apiList[Math.floor(Math.random() * 2)]
-		console.log(message)
-		console.log("apii", apii)
+		let apii = Math.floor(Math.random() * 2)==1 ? api1 : api2
     const response = await apii.sendMessage(message, {
       ...options,
       onProgress: (partialResponse) => {
