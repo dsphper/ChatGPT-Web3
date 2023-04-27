@@ -16,7 +16,8 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+		"type-check": "eslint .",
+		"lint:fix": "eslint . --fix",
     "bootstrap": "pnpm install && pnpm run common:prepare",
     "common:cleanup": "rimraf node_modules && rimraf pnpm-lock.yaml",
     "common:prepare": "husky install"
