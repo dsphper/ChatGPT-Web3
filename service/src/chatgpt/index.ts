@@ -16,7 +16,7 @@ dotenv.config()
 
 const ErrorCodeMessage: Record<string, string> = {
   401: '[OpenAI] 提供错误的API密钥 | Incorrect API key provided',
-	429: '[OpenAI] 每次只能发送一条消息。在发送另一条消息之前，请等待其他响应完成，或等待一分钟。 | Only one message at a time. Please allow any other responses to complete before sending another message, or wait one minute.',
+	429: '[OpenAI] 每次只能发送一条消息。在发送另一条消息之前，请等待其他响应完成，或等待几秒钟。 | Only one message at a time. Please allow any other responses to complete before sending another message, or wait A few seconds.',
   403: '[OpenAI] 服务器拒绝访问，请稍后再试 | Server refused to access, please try again later',
   502: '[OpenAI] 错误的网关 |  Bad Gateway',
   503: '[OpenAI] 服务器繁忙，请稍后再试 | Server is busy, please try again later',
