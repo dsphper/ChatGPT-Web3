@@ -4,40 +4,40 @@ import { HoverButton, SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 
 interface Props {
-  usingContext: boolean
+	usingContext: boolean
 }
 
 interface Emit {
-  (ev: 'export'): void
-  (ev: 'toggleUsingContext'): void
+	(ev: 'export'): void
+	(ev: 'toggleUsingContext'): void
 }
 
 defineProps<Props>()
 
 const emit = defineEmits<Emit>()
 
-const appStore = useAppStore()
-const chatStore = useChatStore()
+const appStore = useAppStore() // 获取应用程序状态 store
+const chatStore = useChatStore() // 获取聊天记录状态 store
 
-const collapsed = computed(() => appStore.siderCollapsed)
-const currentChatHistory = computed(() => chatStore.getChatHistoryByCurrentActive)
+const collapsed = computed(() => appStore.siderCollapsed) // 是否折叠的侧边栏状态
+const currentChatHistory = computed(() => chatStore.getChatHistoryByCurrentActive) // 当前活动的聊天记录
 
-function handleUpdateCollapsed() {
-  appStore.setSiderCollapsed(!collapsed.value)
+function handleUpdateCollapsed() { // 切换侧边栏的展开和折叠状态
+	appStore.setSiderCollapsed(!collapsed.value)
 }
 
-function onScrollToTop() {
-  const scrollRef = document.querySelector('#scrollRef')
-  if (scrollRef)
-    nextTick(() => scrollRef.scrollTop = 0)
+function onScrollToTop() { // 将聊天记录滚动到顶部
+	const scrollRef = document.querySelector('#scrollRef')
+	if (scrollRef)
+		nextTick(() => scrollRef.scrollTop = 0)
 }
 
-function handleExport() {
-  emit('export')
+function handleExport() { // 导出聊天记录
+	emit('export')
 }
 
-function toggleUsingContext() {
-  emit('toggleUsingContext')
+function toggleUsingContext() { // 切换是否显示聊天上下文
+	emit('toggleUsingContext')
 }
 </script>
 

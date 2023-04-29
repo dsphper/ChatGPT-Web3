@@ -16,44 +16,36 @@ import {useBasicLayout} from '@/hooks/useBasicLayout'
 import {useChatStore, usePromptStore} from '@/store'
 import {fetchChatAPIProcess} from '@/api'
 import {t} from '@/locales'
-// 用于取消 HTTP 请求的控制器
-let controller = new AbortController()
-// 是否开启了长回复模式
-const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
-// 获取当前路由对象
-const route = useRoute()
-// 弹窗相关的 hook
-const dialog = useDialog()
-// 消息提示相关的 hook
-const ms = useMessage()
-// 使用 chatStore 的 hook 获取 chat 数据
-const chatStore = useChatStore()
-// 复制代码相关的 hook
-useCopyCode()
-// 获取当前是否为移动端的 hook
-const {isMobile} = useBasicLayout()
-// 获取 chat 相关的 hook
-const {addChat, updateChat, updateChatSome, getChatByUuidAndIndex} = useChat()
-// 页面滚动相关的 hook
-const {scrollRef, scrollToBottom, scrollToBottomIfAtBottom} = useScroll()
-// 获取是否开启对话上下文的 hook
-const {usingContext, toggleUsingContext} = useUsingContext()
-// 获取路由参数中的 uuid
-const {uuid} = route.params as { uuid: string }
-// 通过 chatStore 获取当前 uuid 对应的 chat 数据
-const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
-// 获取包含对话选项的 chat 数据列表
-const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !!item.conversationOptions)))
-// 输入框的值
-const prompt = ref<string>('')
-// 是否正在加载
-const loading = ref<boolean>(false)
+
+let controller = new AbortController() // 用于取消 HTTP 请求的控制器
+
+const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true' // 是否开启了长回复模式
+
+const route = useRoute() // 获取当前路由对象
+const dialog = useDialog() // 弹窗相关的 hook
+const ms = useMessage() // 消息提示相关的 hook
+
+const chatStore = useChatStore() // 使用 chatStore 的 hook 获取 chat 数据
+
+useCopyCode() // 复制代码相关的 hook
+
+const {isMobile} = useBasicLayout() // 获取当前是否为移动端的 hook
+const {addChat, updateChat, updateChatSome, getChatByUuidAndIndex} = useChat() // 获取 chat 相关的 hook
+const {scrollRef, scrollToBottom, scrollToBottomIfAtBottom} = useScroll() // 页面滚动相关的 hook
+const {usingContext, toggleUsingContext} = useUsingContext() // 获取是否开启对话上下文的 hook
+
+const {uuid} = route.params as { uuid: string } // 获取路由参数中的 uuid
+
+const dataSources = computed(() => chatStore.getChatByUuid(+uuid)) // 通过 chatStore 获取当前 uuid 对应的 chat 数据
+const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !!item.conversationOptions))) // 获取包含对话选项的 chat 数据列表
+
+const prompt = ref<string>('') // 输入框的值
+const loading = ref<boolean>(false) // 是否正在加载
 const inputRef = ref<Ref | null>(null)
 
-// 添加PromptStore
+// 输入提示相关的 store
 const promptStore = usePromptStore()
-
-// 使用storeToRefs，保证store修改后，联想部分能够重新渲染
+// 使用 storeToRefs，保证 store 修改后，联想部分能够重新渲染
 const {promptList: promptTemplate} = storeToRefs<any>(promptStore)
 
 // 未知原因刷新页面，loading 状态不会重置，手动重置
@@ -71,14 +63,18 @@ function handleSubmit() {
 async function onConversation() {
 	// 获取用户输入的文本
 	let message = prompt.value
+
 	// 如果当前正在加载中，则不执行任何操作
 	if (loading.value)
 		return
+
 	// 如果用户未输入任何文本或输入的文本都是空格，则不执行任何操作
 	if (!message || message.trim() === '')
 		return
+
 	// 取消之前可能正在进行的聊天请求
 	controller = new AbortController()
+
 	// 添加当前用户的输入到聊天记录中，并滚动到最底部
 	addChat(
 		+uuid,
@@ -92,15 +88,18 @@ async function onConversation() {
 		},
 	)
 	scrollToBottom()
+
 	// 标记为正在加载中，并清空输入框
 	loading.value = true
 	prompt.value = ''
+
 	// 设置请求参数
 	let options: Chat.ConversationRequest = {}
 	const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
 
 	if (lastContext && usingContext.value)
 		options = {...lastContext}
+
 	// 在聊天记录中添加一个正在加载的消息，并滚动到最底部
 	addChat(
 		+uuid,
@@ -126,7 +125,6 @@ async function onConversation() {
 				options,
 				signal: controller.signal,
 				onDownloadProgress: ({event}) => {
-					console.log('aa')
 					// 处理聊天请求返回的数据
 					const xhr = event.target
 					const {responseText} = xhr
@@ -151,6 +149,7 @@ async function onConversation() {
 								requestOptions: {prompt: message, options: {...options}},
 							},
 						)
+
 						// 如果需要长时间等待聊天请求的响应
 						if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
 							options.parentMessageId = data.id
@@ -158,6 +157,7 @@ async function onConversation() {
 							message = ''
 							return fetchChatAPIOnce()
 						}
+
 						// 如果滚动条在最底部，则滚动到底部
 						scrollToBottomIfAtBottom()
 					} catch (error) {
@@ -172,6 +172,7 @@ async function onConversation() {
 	} catch (error: any) {
 		// 如果error存在，则errorMessage等于error.message，否则等于t('common.wrong')
 		const errorMessage = error?.message ?? t('common.wrong')
+
 		// 如果error.message等于'canceled'
 		if (error.message === 'canceled') {
 			// 更新当前聊天的loading为false
@@ -186,8 +187,10 @@ async function onConversation() {
 			scrollToBottomIfAtBottom()
 			return
 		}
+
 		// 根据uuid和索引获取当前聊天
 		const currentChat = getChatByUuidAndIndex(+uuid, dataSources.value.length - 1)
+
 		// 如果当前聊天的文本存在且不为空
 		if (currentChat?.text && currentChat.text !== '') {
 			// 更新当前聊天的文本，加上错误信息
@@ -202,6 +205,7 @@ async function onConversation() {
 			)
 			return
 		}
+		console.log('err')
 		// 更新当前聊天的信息，包括错误信息
 		updateChat(
 			+uuid,
@@ -228,17 +232,22 @@ async function onRegenerate(index: number) {
 	// 如果已经在加载，则返回
 	if (loading.value)
 		return
+
 	// 创建一个新的AbortController
 	controller = new AbortController()
+
 	// 获取当前数据源的请求选项
 	const {requestOptions} = dataSources.value[index]
+
 	// 设置消息和选项
 	let message = requestOptions?.prompt ?? ''
 	let options: Chat.ConversationRequest = {}
 	if (requestOptions.options)
 		options = {...requestOptions.options}
+
 	// 将loading设置为true
 	loading.value = true
+
 	// 更新聊天窗口，设置loading为true
 	updateChat(
 		+uuid,
@@ -276,6 +285,7 @@ async function onRegenerate(index: number) {
 					try {
 						// 尝试解析响应JSON
 						const data = JSON.parse(chunk)
+						console.log(data)
 						// 更新聊天窗口
 						updateChat(
 							+uuid,
@@ -319,6 +329,7 @@ async function onRegenerate(index: number) {
 			)
 			return
 		}
+
 		// 如果发生错误，则将errorMessage设置为error.message，否则设置为t('common.wrong')
 		const errorMessage = error?.message ?? t('common.wrong')
 		// 更新聊天窗口，设置error为true，loading为false，设置错误消息
@@ -340,12 +351,12 @@ async function onRegenerate(index: number) {
 		loading.value = false
 	}
 }
-
 // 处理导出聊天窗口为图片的操作
 function handleExport() {
 	// 如果正在加载，则返回
 	if (loading.value)
 		return
+
 	// 弹出确认对话框
 	const d = dialog.warning({
 		title: t('chat.exportImage'),
@@ -373,6 +384,7 @@ function handleExport() {
 				tempLink.setAttribute('download', 'chat-shot.png')
 				if (typeof tempLink.download === 'undefined')
 					tempLink.setAttribute('target', '_blank')
+
 				// 将a元素添加到body中，模拟用户点击下载
 				document.body.appendChild(tempLink)
 				tempLink.click()
@@ -393,12 +405,12 @@ function handleExport() {
 		},
 	})
 }
-
 // 处理删除单个消息的操作
 function handleDelete(index: number) {
 	// 如果正在加载，则返回
 	if (loading.value)
 		return
+
 	// 弹出确认对话框
 	dialog.warning({
 		title: t('chat.deleteMessage'),
@@ -417,6 +429,7 @@ function handleClear() {
 	// 如果正在加载，则返回
 	if (loading.value)
 		return
+
 	// 弹出确认对话框
 	dialog.warning({
 		title: t('chat.clearChat'),
@@ -457,9 +470,7 @@ function handleStop() {
 	}
 }
 
-// 可优化部分
-// 搜索选项计算，这里使用value作为索引项，所以当出现重复value时渲染异常(多项同时出现选中效果)
-// 理想状态下其实应该是key作为索引项,但官方的renderOption会出现问题，所以就需要value反renderLabel实现
+// 计算搜索选项
 const searchOptions = computed(() => {
 	// 如果提示符以“/”开头，则返回与提示符相匹配的选项
 	if (prompt.value.startsWith('/')) {
@@ -486,16 +497,19 @@ const renderOption = (option: { label: string }) => {
 	// 如果没有找到匹配的项，则返回一个空数组
 	return []
 }
+
 // 计算输入框的placeholder文本
 const placeholder = computed(() => {
 	if (isMobile.value)
 		return t('chat.placeholderMobile')
 	return t('chat.placeholder')
 })
+
 // 计算发送按钮是否可用
 const buttonDisabled = computed(() => {
 	return loading.value || !prompt.value || prompt.value.trim() === ''
 })
+
 // 计算底部区域的样式类
 const footerClass = computed(() => {
 	let classes = ['p-4']
@@ -503,18 +517,22 @@ const footerClass = computed(() => {
 		classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pr-3', 'overflow-hidden']
 	return classes
 })
+
 // 组件挂载时将滚动条滚动到底部，并将焦点设置到输入框中（如果是桌面设备）
 onMounted(() => {
 	scrollToBottom()
 	if (inputRef.value && !isMobile.value)
 		inputRef.value?.focus()
 })
+
 // 组件卸载时如果正在加载，则调用AbortController的abort方法
 onUnmounted(() => {
 	if (loading.value)
 		controller.abort()
 })
+
 </script>
+
 <template>
 	<div class="flex flex-col w-full h-full">
 		<HeaderComponent
@@ -522,7 +540,7 @@ onUnmounted(() => {
 			:using-context="usingContext"
 			@export="handleExport"
 			@toggle-using-context="toggleUsingContext"
-		/> <!-- 头部组件，只在移动端显示 -->
+		/>
 		<main class="flex-1 overflow-hidden">
 			<div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
 				<div
@@ -530,13 +548,13 @@ onUnmounted(() => {
 					class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
 					:class="[isMobile ? 'p-2' : 'p-4']"
 				>
-					<template v-if="!dataSources.length"> <!-- 如果没有聊天记录 -->
+					<template v-if="!dataSources.length">
 						<div class="flex items-center justify-center mt-4 text-center text-neutral-300">
-							<SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl"/> <!-- 气泡图标 -->
+							<SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl"/>
 							<span>Aha~</span>
 						</div>
 					</template>
-					<template v-else> <!-- 如果有聊天记录 -->
+					<template v-else>
 						<div>
 							<Message
 								v-for="(item, index) of dataSources"
@@ -548,14 +566,14 @@ onUnmounted(() => {
 								:loading="item.loading"
 								@regenerate="onRegenerate(index)"
 								@delete="handleDelete(index)"
-							/> <!-- 聊天气泡组件，使用 v-for 渲染 -->
+							/>
 							<div class="sticky bottom-0 left-0 flex justify-center">
 								<NButton v-if="loading" type="warning" @click="handleStop">
 									<template #icon>
 										<SvgIcon icon="ri:stop-circle-line"/>
 									</template>
 									Stop Responding
-								</NButton> <!-- 停止回复按钮 -->
+								</NButton>
 							</div>
 						</div>
 					</template>
@@ -569,19 +587,18 @@ onUnmounted(() => {
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:delete-bin-line"/>
             </span>
-					</HoverButton> <!-- 清除聊天记录按钮 -->
+					</HoverButton>
 					<HoverButton v-if="!isMobile" @click="handleExport">
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:download-2-line"/>
             </span>
-					</HoverButton> <!-- 导出聊天记录按钮，只在非移动端显示 -->
+					</HoverButton>
 					<HoverButton v-if="!isMobile" @click="toggleUsingContext">
             <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
               <SvgIcon icon="ri:chat-history-line"/>
             </span>
-					</HoverButton> <!-- 显示上下文历史记录按钮，只在非移动端显示 -->
+					</HoverButton>
 					<NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
-						<!-- 自动联想输入框 -->
 						<template #default="{ handleInput, handleBlur, handleFocus }">
 							<NInput
 								ref="inputRef"
@@ -597,11 +614,10 @@ onUnmounted(() => {
 						</template>
 					</NAutoComplete>
 					<NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
-						<!-- 发送按钮 -->
 						<template #icon>
-							<span class="dark:text-black">
-								<SvgIcon icon="ri:send-plane-fill"/>
-							</span>
+              <span class="dark:text-black">
+                <SvgIcon icon="ri:send-plane-fill"/>
+              </span>
 						</template>
 					</NButton>
 				</div>
